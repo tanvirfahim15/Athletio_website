@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- Firebase js start -->
+    <script src="https://www.gstatic.com/firebasejs/4.4.0/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.3.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.3.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.3.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.3.0/firebase-messaging.js"></script>
+    <script src="firebase.js"></script>
+
+    <!-- Firebase js start -->
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <script src="MyMethods.js"></script>
+
+    <title>Title</title>
+
+    <link rel="stylesheet" type="text/css" href="nav.css">
+
+    <script>
+        function drawWeightChart(array,view) {
+
+            google.charts.load('current', {'packages':['corechart']});
+            google.charts.setOnLoadCallback(drawChart);
+            function drawChart() {
+                var data = google.visualization.arrayToDataTable(array);
+
+                var options = {
+                    title: 'Your Weight Chart',
+                    legend: {position: 'none'},
+                    titleTextStyle: {
+                        color: '#fafafa'
+                    },
+                    backgroundColor: '#1a2d1e',
+                    series: {
+                        0: { color: '#14c147' },
+                    },
+                    hAxis: {
+                        textStyle: {
+                            color: "#FFFFFF"
+                        },
+                        gridlines: {
+                            color: "#FFFFFF"
+                        },
+                        baselineColor: '#FFFFFF'
+                    },
+                    vAxis: {
+                        textStyle: {
+                            color: "#FFFFFF"
+                        },
+                        gridlines: {
+                            color: "#FFFFFF"
+                        },
+                        baselineColor: '#FFFFFF'
+                    }
+
+                };
+
+                var chart = new google.visualization.LineChart(document.getElementById(view));
+
+                chart.draw(data, options);
+            }
+        }
+        function drawStepChart(array,view) {
+
+            google.charts.load('current', {'packages':['corechart']});
+            google.charts.setOnLoadCallback(drawChart);
+            function drawChart() {
+                var data = google.visualization.arrayToDataTable(array);
+
+                var options = {
+                    title: 'Your Step Count Chart',
+                    legend: {position: 'none'},
+                    titleTextStyle: {
+                        color: '#fafafa'
+                    },
+                    backgroundColor: '#1a2d1e',
+                    series: {
+                        0: { color: '#14c147' },
+                    },
+                    hAxis: {
+                        textStyle: {
+                            color: "#FFFFFF"
+                        },
+                        gridlines: {
+                            color: "#FFFFFF"
+                        },
+                        baselineColor: '#FFFFFF'
+                    },
+                    vAxis: {
+                        textStyle: {
+                            color: "#FFFFFF"
+                        },
+                        gridlines: {
+                            color: "#FFFFFF"
+                        },
+                        baselineColor: '#FFFFFF'
+                    }
+
+                };
+
+                var chart = new google.visualization.LineChart(document.getElementById(view));
+
+                chart.draw(data, options);
+            }
+        }
+        function drawCallorieChart(array,view) {
+
+            google.charts.load('current', {'packages':['corechart']});
+            google.charts.setOnLoadCallback(drawChart);
+            function drawChart() {
+                var data = google.visualization.arrayToDataTable(array);
+
+                var options = {
+                    title: 'Your Callorie Chart',
+                    legend: {position: 'none'},
+                    titleTextStyle: {
+                        color: '#fafafa'
+                    },
+                    backgroundColor: '#1a2d1e',
+                    series: {
+                        0: { color: '#14c147' },
+                    },
+                    hAxis: {
+                        textStyle: {
+                            color: "#FFFFFF"
+                        },
+                        gridlines: {
+                            color: "#FFFFFF"
+                        },
+                        baselineColor: '#FFFFFF'
+                    },
+                    vAxis: {
+                        textStyle: {
+                            color: "#FFFFFF"
+                        },
+                        gridlines: {
+                            color: "#FFFFFF"
+                        },
+                        baselineColor: '#FFFFFF'
+                    }
+
+                };
+
+                var chart = new google.visualization.LineChart(document.getElementById(view));
+
+                chart.draw(data, options);
+            }
+        }
+
+        var userData;
+        function appnext() {
+            var deta=[["Date","Weight"]];
+            for(i=0;i<Object.keys(userData.weightMap).length;i++){
+                var str=Object.keys(userData.weightMap)[i];
+                str=str.replace(/,/g,"/");
+                str=str.replace(/{day=/g,"");
+                str=str.replace(/month=/g,"");
+                str=str.replace(/year=/g,"");
+                str=str.replace(/}/g,"");
+                deta.push([str,userData.weightMap[Object.keys(userData.weightMap)[i]]]);
+            }
+
+            drawWeightChart(deta,'weight_chart');
+
+            deta=[["Date","Steps"]];
+            for(i=0;i<Object.keys(userData.stepCountMap).length;i++){
+                var str=Object.keys(userData.stepCountMap)[i];
+                str=str.replace(/,/g,"/");
+                str=str.replace(/{day=/g,"");
+                str=str.replace(/month=/g,"");
+                str=str.replace(/year=/g,"");
+                str=str.replace(/}/g,"");
+                deta.push([str,userData.stepCountMap[Object.keys(userData.stepCountMap)[i]]]);
+            }
+
+            drawStepChart(deta,'step_chart');
+            deta=[["Date","Steps"]];
+            for(i=0;i<Object.keys(userData.calorieMap).length;i++){
+                var str=Object.keys(userData.calorieMap)[i];
+                str=str.replace(/,/g,"/");
+                str=str.replace(/{day=/g,"");
+                str=str.replace(/month=/g,"");
+                str=str.replace(/year=/g,"");
+                str=str.replace(/}/g,"");
+                deta.push([str,userData.calorieMap[Object.keys(userData.calorieMap)[i]]]);
+            }
+
+            drawCallorieChart(deta,'callorie_chart');
+
+        }
+
+        function app() {
+            document.getElementById("uName").innerHTML = "&nbspWelcome "+app.user.displayName;
+            var Ref = firebase.database().ref().child("Users").child(app.user.uid).child("userData");
+            Ref.on("value", function(snapshot) {
+                if (snapshot.val()!=null){
+                    userData=snapshot.val();
+                    appnext();
+                }
+            }, function (error) {
+                console.log("Error: " + error.code);
+            });
+
+
+        }
+
+
+
+
+    </script>
+
+</head>
+<body>
+<br/>
+    <div id="navbar">
+        <table width="80%" align="center">
+            <tr>
+                <td >
+                    <div class="topnav" >
+                        <a class="active" href="#home">Home</a>
+                        <a href="#news">News</a>
+                        <a href="#contact">Contact</a>
+                    </div>
+                </td>
+                <td width="80px">
+
+                    <div class="topnav">
+                        <a onclick="logout()" href="Home.html">Logout</a>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+    </div>
+<br/>
+
+<table width="80%" align="center" class="content" >
+    <tr>
+        <td>
+            <h3 id="uName" align="center">&nbsp;Welcome</h3>
+        </td>
+    </tr>
+</table>
+<br/>
+
+<table width="80%" align="center" class="chart" >
+    <tr>
+        <td align="center">
+
+            <div id="callorie_chart" style="width: 800px; height: 500px; margin: 10px "></div>
+        </td>
+    </tr>
+</table>
+<br/>
+
+<table width="80%" align="center" class="chart" >
+    <tr>
+        <td align="center">
+
+            <div id="step_chart" style="width: 800px; height: 500px; margin: 10px "></div>
+        </td>
+    </tr>
+</table>
+<br/>
+<table  width="80%" align="center" class="chart">
+    <tr>
+        <td align="center">
+
+            <div id="weight_chart" style="width: 800px; height: 500px; margin: 10px "></div>
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

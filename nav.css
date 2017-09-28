@@ -1,0 +1,44 @@
+body
+{
+    margin: 5px;
+    background-color: #dad9d8;
+    font-family: Arial;
+    color: black;
+}
+
+.topnav {
+    overflow: hidden;
+    background-color: #333;
+}
+
+.topnav a {
+    float: left;
+    display: block;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+}
+
+.topnav a:hover {
+    background-color: #dbe7d8;
+    color: black;
+}
+
+.topnav a.active {
+    background-color: #24b44b;
+    color: white;
+}
+
+.content{
+    border: groove;
+    border-color: #545552;
+    background-color: #b9cdc2;
+}
+
+.chart{
+    border: groove;
+    border-color: #f8faf5;
+    background-color: #1a2d1e;
+}
