@@ -12,16 +12,27 @@
 
     <!-- Firebase js start -->
 
+    <!-- chart js start -->
+
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+
+    <!-- chart js start -->
+
+    <!-- my methods start -->
 
     <script src="MyMethods.js"></script>
 
+    <!-- my methods stop -->
+
     <title>Title</title>
 
+    <!-- navigation bar css start -->
     <link rel="stylesheet" type="text/css" href="nav.css">
+    <!-- navigation bar css stop -->
 
     <script>
-        function drawWeightChart(array,view) {
+        function drawChart(array,view,title) {
 
             google.charts.load('current', {'packages':['corechart']});
             google.charts.setOnLoadCallback(drawChart);
@@ -29,93 +40,7 @@
                 var data = google.visualization.arrayToDataTable(array);
 
                 var options = {
-                    title: 'Your Weight Chart',
-                    legend: {position: 'none'},
-                    titleTextStyle: {
-                        color: '#fafafa'
-                    },
-                    backgroundColor: '#1a2d1e',
-                    series: {
-                        0: { color: '#14c147' },
-                    },
-                    hAxis: {
-                        textStyle: {
-                            color: "#FFFFFF"
-                        },
-                        gridlines: {
-                            color: "#FFFFFF"
-                        },
-                        baselineColor: '#FFFFFF'
-                    },
-                    vAxis: {
-                        textStyle: {
-                            color: "#FFFFFF"
-                        },
-                        gridlines: {
-                            color: "#FFFFFF"
-                        },
-                        baselineColor: '#FFFFFF'
-                    }
-
-                };
-
-                var chart = new google.visualization.LineChart(document.getElementById(view));
-
-                chart.draw(data, options);
-            }
-        }
-        function drawStepChart(array,view) {
-
-            google.charts.load('current', {'packages':['corechart']});
-            google.charts.setOnLoadCallback(drawChart);
-            function drawChart() {
-                var data = google.visualization.arrayToDataTable(array);
-
-                var options = {
-                    title: 'Your Step Count Chart',
-                    legend: {position: 'none'},
-                    titleTextStyle: {
-                        color: '#fafafa'
-                    },
-                    backgroundColor: '#1a2d1e',
-                    series: {
-                        0: { color: '#14c147' },
-                    },
-                    hAxis: {
-                        textStyle: {
-                            color: "#FFFFFF"
-                        },
-                        gridlines: {
-                            color: "#FFFFFF"
-                        },
-                        baselineColor: '#FFFFFF'
-                    },
-                    vAxis: {
-                        textStyle: {
-                            color: "#FFFFFF"
-                        },
-                        gridlines: {
-                            color: "#FFFFFF"
-                        },
-                        baselineColor: '#FFFFFF'
-                    }
-
-                };
-
-                var chart = new google.visualization.LineChart(document.getElementById(view));
-
-                chart.draw(data, options);
-            }
-        }
-        function drawCallorieChart(array,view) {
-
-            google.charts.load('current', {'packages':['corechart']});
-            google.charts.setOnLoadCallback(drawChart);
-            function drawChart() {
-                var data = google.visualization.arrayToDataTable(array);
-
-                var options = {
-                    title: 'Your Callorie Chart',
+                    title: title,
                     legend: {position: 'none'},
                     titleTextStyle: {
                         color: '#fafafa'
@@ -161,10 +86,16 @@
                 str=str.replace(/month=/g,"");
                 str=str.replace(/year=/g,"");
                 str=str.replace(/}/g,"");
-                deta.push([str,userData.weightMap[Object.keys(userData.weightMap)[i]]]);
+                var arr=str.split("/");
+                var date=new Date(arr[1]+"/"+arr[0]+"/"+arr[2]);
+                deta.push([date,userData.weightMap[Object.keys(userData.weightMap)[i]]]);
             }
-
-            drawWeightChart(deta,'weight_chart');
+            deta.shift();
+            deta.sort(function (a,b) {
+                return a[0]-b[0];
+            });
+            deta.unshift(["Date","Weight"]);
+            drawChart(deta,'weight_chart','Your Weight Chart');
 
             deta=[["Date","Steps"]];
             for(i=0;i<Object.keys(userData.stepCountMap).length;i++){
@@ -174,11 +105,17 @@
                 str=str.replace(/month=/g,"");
                 str=str.replace(/year=/g,"");
                 str=str.replace(/}/g,"");
-                deta.push([str,userData.stepCountMap[Object.keys(userData.stepCountMap)[i]]]);
+                var arr=str.split("/");
+                var date=new Date(arr[1]+"/"+arr[0]+"/"+arr[2]);
+                deta.push([date,userData.stepCountMap[Object.keys(userData.stepCountMap)[i]]]);
             }
-
-            drawStepChart(deta,'step_chart');
-            deta=[["Date","Steps"]];
+            deta.shift();
+            deta.sort(function (a,b) {
+                return a[0]-b[0];
+            });
+            deta.unshift(["Date","Steps"]);
+            drawChart(deta,'step_chart','Your Step Count Chart');
+            deta=[["Date","Callorie"]];
             for(i=0;i<Object.keys(userData.calorieMap).length;i++){
                 var str=Object.keys(userData.calorieMap)[i];
                 str=str.replace(/,/g,"/");
@@ -186,10 +123,17 @@
                 str=str.replace(/month=/g,"");
                 str=str.replace(/year=/g,"");
                 str=str.replace(/}/g,"");
-                deta.push([str,userData.calorieMap[Object.keys(userData.calorieMap)[i]]]);
+                var arr=str.split("/");
+                var date=new Date(arr[1]+"/"+arr[0]+"/"+arr[2]);
+                deta.push([date,userData.calorieMap[Object.keys(userData.calorieMap)[i]]]);
             }
 
-            drawCallorieChart(deta,'callorie_chart');
+            deta.shift();
+            deta.sort(function (a,b) {
+                return a[0]-b[0];
+            });
+            deta.unshift(["Date","Callorie"]);
+            drawChart(deta,'callorie_chart','Your Callorie Chart');
 
         }
 
@@ -221,8 +165,8 @@
             <tr>
                 <td >
                     <div class="topnav" >
-                        <a class="active" href="#home">Home</a>
-                        <a href="#news">News</a>
+                        <a class="active" href="Home.html">Home</a>
+                        <a href="workouts.html">My Workouts</a>
                         <a href="#contact">Contact</a>
                     </div>
                 </td>
