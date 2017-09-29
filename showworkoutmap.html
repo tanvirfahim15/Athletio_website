@@ -11,10 +11,6 @@
 <script>
     var key=window.location.hash.substring(1);
     console.log(window.location.hash.substring(1));
-</script>
-
-<script>
-
     var workout;
     var  latlngs=[];
     function drawmap() {
@@ -35,12 +31,18 @@
             title: "Start",
             map: map
         });
-
+        var startinfowindow = new google.maps.InfoWindow;
+        startinfowindow.setContent("Start");
+        startinfowindow.open(map, startmarker);
         var stopmarker = new google.maps.Marker({
             position: latlngs[latlngs.length-1],
             title: "End",
             map: map
         });
+
+        var stopinfowindow = new google.maps.InfoWindow;
+        stopinfowindow.setContent("End");
+        stopinfowindow.open(map, stopmarker);
 
         Path.setMap(map);
     }

@@ -1,29 +1,26 @@
-
-<div id="map" style="height: 100%"></div>
 <script>
-    function initMap() {
-        var map = new google.maps.Map(document.getElementById('map'), {
-            zoom: 3,
-            center: {lat: 0, lng: -180},
-            mapTypeId: 'terrain'
+    function init() {
+        var lat=23.755002367315424;
+        var lng=90.37598417706734;
+        var latlng = {lat: 0, lng: 0};
+        latlng["lat"]=lat;
+        latlng["lng"]=lng;
+        var geocoder = new google.maps.Geocoder;
+        geocoder.geocode({'location': latlng}, function(results, status) {
+            if (status === 'OK') {
+                if (results[0]) {
+                    console.log(results[0]["formatted_address"]);
+                } else {
+                    window.alert('No results found');
+                }
+            } else {
+                window.alert('Geocoder failed due to: ' + status);
+            }
         });
-
-        var flightPlanCoordinates = [
-            {lat: 37.772, lng: -122.214},
-            {lat: 21.291, lng: -157.821},
-            {lat: -18.142, lng: 178.431},
-            {lat: -27.467, lng: 153.027}
-        ];
-        var flightPath = new google.maps.Polyline({
-            path: flightPlanCoordinates,
-            geodesic: true,
-            strokeColor: '#FF0000',
-            strokeOpacity: 1.0,
-            strokeWeight: 2
-        });
-
-        flightPath.setMap(map);
     }
+
+
 </script>
-<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDfqqGzHfHmFF9E7cgrkJsO48HFbaKBBzs&callback=initMap">
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDfqqGzHfHmFF9E7cgrkJsO48HFbaKBBzs&callback=init">
 </script>

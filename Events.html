@@ -2,9 +2,160 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+
+    <!-- Firebase js start -->
+    <script src="https://www.gstatic.com/firebasejs/4.4.0/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.3.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.3.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.3.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.3.0/firebase-messaging.js"></script>
+    <script src="firebase.js"></script>
+
+    <!-- Firebase js start -->
+
+    <!-- navigation bar css start -->
+    <link rel="stylesheet" type="text/css" href="nav.css">
+    <!-- navigation bar css stop -->
     <title>Title</title>
+
+
+    <script>
+        var months=["January","February","March", "April", "May","June","July","August","September","October","November","December"];
+        var ind=0;
+        function print(event) {
+            var typstr;
+            var typint=event["type"];
+            if(typint==0){
+                typstr="Running";
+            }
+            else if(typint==1){
+                typstr="Cycling";
+            }
+            else if(typint==2){
+                typstr="Football";
+            }
+            else if(typint==3){
+                typstr="Cricket";
+            }
+            else if(typint==4){
+                typstr="Walking";
+            }
+            else if(typint==5){
+                typstr="Other";
+            }
+            var statusint=event["status"];
+            var status;
+            if(statusint==0){
+                status="Active";
+            }
+            else if(statusint==1){
+                status="Running";
+            }
+            else if(statusint==2){
+                status="Cancelled";
+            }
+            else if(statusint==3){
+                status="Finished";
+            }
+
+            var date=new Date(event["day"]["month"]+"/"+event["day"]["day"]+"/"+event["day"]["year"]);
+            date.setHours(event["hour"]);
+            date.setMinutes(event["min"]);
+            if(date-new Date()<0)
+                status="Finished";
+            var str="<table  width=\"100%\" align=\"center\" class=\"chart\"><td><td width='1%'></td><td>";
+            str+="<br/><span style=\"color: #7e8982 ;\">"+months[date.getMonth()]+" "+date.getDate()+", "+date.getFullYear()+"  "+ date.getHours()+":"+date.getMinutes()+"</span>";
+            str+="<br/><span class=\"title\">"+event["title"]+" </span><br/>";
+            str+="<p align='justify'>"+event["description"]+"</p>";
+            str+="<table><tr>";
+            str+="<td width='50%'><span class=\"field\">Host: </span></td><td>"+event["creatorName"]+"</td>";
+            str+="</tr><tr>";
+            str+="<td width='50%'><span class=\"field\">Type: </span></td><td width='50%'>"+typstr+"</td>";
+
+            if(typint==0||typint==4){
+                str+="</tr><tr>";
+                str+="<td width='50%'><span class=\"field\">Distance: </span></td><td width='50%'>"+event["distanceInMeters"].toFixed(2)+" m"+"</td>";
+            }
+            str+="</tr><tr>";
+            str+="<td width='50%'><span class=\"field\">Duration: </span></td><td width='50%'>"+(event["durationInSec"]/60).toFixed(0)+" min "+(event["durationInSec"]%60)+" sec</td>";
+
+
+            str+="</tr><tr>";
+            str+="<td width='50%'><span class=\"field\">Status: </span></td><td width='50%'>"+status+"</td>";
+
+
+
+
+
+            str+="</tr></table>"
+            str+="<br/></td><td width='1%'></td></tr></table><br/>";
+            if(ind%2==0){
+                document.getElementById("contentleft").innerHTML+=str;
+            }
+            else{
+
+                document.getElementById("contentright").innerHTML+=str;
+            }
+            ind++;
+        }
+
+        function app() {
+            var Ref = firebase.database().ref().child("Events");
+            Ref.on("value", function(snapshot) {
+                if (snapshot.val()!=null){
+                    var deta=snapshot.val();
+                    for(i=0;i<Object.keys(deta).length;i++){
+                        print(deta[Object.keys(deta)[i]]);
+                    }
+                }
+            }, function (error) {
+                console.log("Error: " + error.code);
+            });
+        }
+    </script>
+
+
+
+
+
+
 </head>
 <body>
+<br/>
+<div id="navbar">
+    <table width="80%" align="center">
+        <tr>
+            <td >
+                <div class="topnav" >
+                    <a href="Home.html">Home</a>
+                    <a href="workouts.html">My Workouts</a>
+                    <a href="Exersices.html">Exercises</a>
+                    <a class="active" href="Events.html">Events</a>
+                </div>
+            </td>
+            <td width="80px" valign="top">
 
+                <div class="topnav">
+                    <a onclick="logout()" href="Home.html">Logout</a>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+</div>
+<br/>
+
+<table width="80%" align="center">
+    <tr>
+        <td width="50%" valign="top">
+
+            <div id="contentleft"></div>
+        </td>
+        <td valign="top">
+
+            <div id="contentright"></div>
+        </td>
+    </tr>
+</table>
 </body>
 </html>
