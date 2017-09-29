@@ -1,0 +1,64 @@
+<div id="map" style="height: 100%"></div>
+<!-- Firebase js start -->
+<script src="https://www.gstatic.com/firebasejs/4.4.0/firebase.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.3.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.3.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.3.0/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.3.0/firebase-messaging.js"></script>
+<script src="firebase.js"></script>
+
+<!-- Firebase js start -->
+<script>
+    var key=window.location.hash.substring(1);
+    console.log(window.location.hash.substring(1));
+</script>
+
+<script>
+
+    var workout;
+    var  latlngs=[];
+    function drawmap() {
+        var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 15,
+            center: latlngs[0],
+            mapTypeId: 'terrain'
+        });
+        var Path = new google.maps.Polyline({
+            path: latlngs,
+            geodesic: true,
+            strokeColor: '#24b44b',
+            strokeOpacity: 1.0,
+            strokeWeight: 8
+        });
+        var startmarker = new google.maps.Marker({
+            position: latlngs[0],
+            title: "Start",
+            map: map
+        });
+
+        var stopmarker = new google.maps.Marker({
+            position: latlngs[latlngs.length-1],
+            title: "End",
+            map: map
+        });
+
+        Path.setMap(map);
+    }
+
+    function app() {
+        var ref=firebase.database().ref().child("workouts").child(key);
+        ref.on("value", function(snapshot) {
+            if (snapshot.val()!=null){
+                workout=snapshot.val();
+                latlngs=workout["mpVector"];
+                drawmap();
+            }
+        }, function (error) {
+            console.log("Error: " + error.code);
+        });
+    }
+
+</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDfqqGzHfHmFF9E7cgrkJsO48HFbaKBBzs">
+</script>
+<title>Title</title>

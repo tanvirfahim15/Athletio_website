@@ -21,25 +21,16 @@
     
     
     <script>
-        function strToDate(str) {
-            str=str.replace(/,/g,"/");
-            str=str.replace(/{day=/g,"");
-            str=str.replace(/month=/g,"");
-            str=str.replace(/year=/g,"");
-            str=str.replace(/}/g,"");
-            var arr=str.split("/");
-            var date=new Date(arr[1]+"/"+arr[0]+"/"+arr[2]);
-            return date;
-        }
 
         var userData;
         var workouts=[];
         var months=["January","February","March", "April", "May","June","July","August","September","October","November","December"];
-        function printWorkout(workout) {
+        var ind=0;
+        function printWorkout(workout,key) {
             var workoutDate=new Date(workout["day"]["month"]+"/"+workout["day"]["day"]+"/"+workout["day"]["year"]);
             workoutDate.setHours(workout["hour"]);
             workoutDate.setMinutes(workout["min"]);
-            var str="<table  width=\"80%\" align=\"center\" class=\"chart\"><tr><td width='50%'>";
+            var str="<table  width=\"100%\" align=\"center\" class=\"chart\"><tr><td width='50%'>";
             str+="<br/>&nbsp;&nbsp;&nbsp;<span style=\"color: #7e8982 ;\">"+months[workoutDate.getMonth()]+" "+workoutDate.getDate()+", "+workoutDate.getFullYear()+"  "+ workoutDate.getHours()+":"+workoutDate.getMinutes()+"</span>";
             var typstr;
             if(workout["TYPE"]==0){
@@ -55,16 +46,31 @@
             str+="<br/><span class=\"field\">&nbsp;&nbsp;&nbsp;Callories burnt: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;"+workout["callorie"];
             str+="<br/><span class=\"field\">&nbsp;&nbsp;&nbsp;Distance covered: </span>&nbsp;"+workout["distanceInMeters"].toFixed(2)+"&nbsp;m";
             str+="<br/><span class=\"field\">&nbsp;&nbsp;&nbsp;Duration: </span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+(workout["timeInSec"]/60).toFixed(0)+" min "+(workout["timeInSec"]%60)+" sec";
-            str+="<br/><span class=\"field\">&nbsp;&nbsp;&nbsp;Average speed: </span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+(workout["distanceInMeters"]/workout["timeInSec"]).toFixed(2)+" m/s<br/><br/>";
-            str+="</td><td valign='top'>map</td></tr></table><br/>";
-            document.getElementById("workouts").innerHTML+=str;
+            str+="<br/><span class=\"field\">&nbsp;&nbsp;&nbsp;Average speed: </span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+(workout["distanceInMeters"]/workout["timeInSec"]).toFixed(2)+" m/s<br/>";
+
+            if(workout["TYPE"]!=2){
+                str+="<br/><br/></td><td valign='top' width='20%'><div><br/><br/><br/><a href='showworkoutmap.html#"+key+"'  style='color: #bcff9b'>Show Map</a></div>";
+            }
+            else {
+                str+="<br/>";
+            }
+            str+="<br/></td></tr></table><br/>";
+            if(ind%2==0){
+                document.getElementById("workoutsleft").innerHTML+=str;
+            }
+            else{
+
+                document.getElementById("workoutsright").innerHTML+=str;
+            }
+            ind++;
         }
         function getWorkout(workoutkeyarr,i) {
-            var ref=firebase.database().ref().child("workouts").child(workoutkeyarr[i]);
+            var key=workoutkeyarr[i];
+            var ref=firebase.database().ref().child("workouts").child(key);
             ref.on("value", function(snapshot) {
                 if (snapshot.val()!=null){
                     var workout=snapshot.val();
-                        printWorkout(workout);
+                    printWorkout(workout,key);
                 }
             }, function (error) {
                 console.log("Error: " + error.code);
@@ -88,7 +94,8 @@
                 console.log("Error: " + error.code);
             });
         }
-    </script>
+
+</script>
 </head>
 <body>
 <br/>
@@ -99,10 +106,11 @@
                 <div class="topnav" >
                     <a href="Home.html">Home</a>
                     <a class="active" href="workouts.html">My Workouts</a>
-                    <a href="#contact">Contact</a>
+                    <a href="Exersices.html">Exercises</a>
+                    <a href="Events.html">Events</a>
                 </div>
             </td>
-            <td width="80px">
+            <td width="80px" valign="top">
 
                 <div class="topnav">
                     <a onclick="logout()" href="Home.html">Logout</a>
@@ -114,11 +122,18 @@
 </div>
 <br/>
 
+<table width="80%" align="center">
+    <tr>
+        <td width="50%" valign="top">
 
-            <div id="workouts">
+            <div id="workoutsleft"></div>
+        </td>
+        <td valign="top">
 
-
-            </div>
+            <div id="workoutsright"></div>
+        </td>
+    </tr>
+</table>
 
 </body>
 </html>

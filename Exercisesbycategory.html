@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">    <!-- Firebase js start -->
+    <script src="https://www.gstatic.com/firebasejs/4.4.0/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.3.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.3.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.3.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.3.0/firebase-messaging.js"></script>
+    <script src="firebase.js"></script>
+
+    <!-- Firebase js start -->
+
+    <!-- chart js start -->
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+
+    <!-- chart js start -->
+
+    <!-- my methods start -->
+
+    <script src="MyMethods.js"></script>
+
+    <!-- my methods stop -->
+
+    <title>Title</title>
+
+    <!-- navigation bar css start -->
+    <link rel="stylesheet" type="text/css" href="nav.css">
+    <!-- navigation bar css stop -->
+
+
+    <script>
+
+        var ind=0;
+        function print(exersice) {
+            var str="<table  width=\"100%\" align=\"center\" class=\"chart\"><tr><td width='1%'></td><td width='50%' ><br/>";
+            str+="<span class='title' >"+exersice["title"]+"</span><br/><p align='justify'>"+exersice["description"]+"</p>"+"<span class='field'>Category: </span><a style='color: #bcff9b' href='Exersices.html#"+exersice["category"]+"'>"+exersice["category"]+"</a>";
+            str+="<br/><br/></td><td width='1%'></td></tr></table><br/>";
+            if(ind%2==0){
+                document.getElementById("contentleft").innerHTML+=str;
+            }
+            else{
+
+                document.getElementById("contentright").innerHTML+=str;
+            }
+            ind++;
+        }
+
+
+        var key=window.location.hash.substring(1);
+        function app() {
+            var Ref = firebase.database().ref().child("Exersices");
+            Ref.on("value", function(snapshot) {
+                if (snapshot.val()!=null){
+                    var deta=snapshot.val();
+                    for(i=0;i<Object.keys(deta).length;i++){
+                        if(key!=""){
+                            if(deta[Object.keys(deta)[i]]["category"]==key)
+
+                                print(deta[Object.keys(deta)[i]]);
+                        }
+                        else
+                            print(deta[Object.keys(deta)[i]]);
+                    }
+                }
+            }, function (error) {
+                console.log("Error: " + error.code);
+            });
+        }
+
+    </script>
+</head>
+<body>
+
+<br/>
+<div id="navbar">
+    <table width="80%" align="center">
+        <tr>
+            <td >
+                <div class="topnav" >
+                    <a href="Home.html">Home</a>
+                    <a href="workouts.html">My Workouts</a>
+                    <a class="active" href="Exersices.html">Exercises</a>
+                    <a href="Events.html">Events</a>
+                </div>
+            </td>
+            <td width="80px" valign="top">
+
+                <div class="topnav">
+                    <a onclick="logout()" href="Home.html">Logout</a>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+</div>
+<br/>
+
+<table width="80%" align="center">
+    <tr>
+        <td width="50%" valign="top">
+
+            <div id="contentleft"></div>
+        </td>
+        <td valign="top">
+
+            <div id="contentright"></div>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
