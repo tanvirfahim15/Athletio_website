@@ -45,7 +45,7 @@
                     titleTextStyle: {
                         color: '#fafafa'
                     },
-                    backgroundColor: '#1a2d1e',
+                    backgroundColor: '#333',
                     series: {
                         0: { color: '#14c147' },
                     },
@@ -76,18 +76,23 @@
             }
         }
 
+        function strToDate(str) {
+            str=str.replace(/,/g,"/");
+            str=str.replace(/{day=/g,"");
+            str=str.replace(/month=/g,"");
+            str=str.replace(/year=/g,"");
+            str=str.replace(/}/g,"");
+            var arr=str.split("/");
+            var date=new Date(arr[1]+"/"+arr[0]+"/"+arr[2]);
+            return date;
+        }
+
         var userData;
         function appnext() {
             var deta=[["Date","Weight"]];
             for(i=0;i<Object.keys(userData.weightMap).length;i++){
                 var str=Object.keys(userData.weightMap)[i];
-                str=str.replace(/,/g,"/");
-                str=str.replace(/{day=/g,"");
-                str=str.replace(/month=/g,"");
-                str=str.replace(/year=/g,"");
-                str=str.replace(/}/g,"");
-                var arr=str.split("/");
-                var date=new Date(arr[1]+"/"+arr[0]+"/"+arr[2]);
+                var date=strToDate(str);
                 deta.push([date,userData.weightMap[Object.keys(userData.weightMap)[i]]]);
             }
             deta.shift();
@@ -100,13 +105,7 @@
             deta=[["Date","Steps"]];
             for(i=0;i<Object.keys(userData.stepCountMap).length;i++){
                 var str=Object.keys(userData.stepCountMap)[i];
-                str=str.replace(/,/g,"/");
-                str=str.replace(/{day=/g,"");
-                str=str.replace(/month=/g,"");
-                str=str.replace(/year=/g,"");
-                str=str.replace(/}/g,"");
-                var arr=str.split("/");
-                var date=new Date(arr[1]+"/"+arr[0]+"/"+arr[2]);
+                var date=strToDate(str);
                 deta.push([date,userData.stepCountMap[Object.keys(userData.stepCountMap)[i]]]);
             }
             deta.shift();
@@ -118,13 +117,7 @@
             deta=[["Date","Callorie"]];
             for(i=0;i<Object.keys(userData.calorieMap).length;i++){
                 var str=Object.keys(userData.calorieMap)[i];
-                str=str.replace(/,/g,"/");
-                str=str.replace(/{day=/g,"");
-                str=str.replace(/month=/g,"");
-                str=str.replace(/year=/g,"");
-                str=str.replace(/}/g,"");
-                var arr=str.split("/");
-                var date=new Date(arr[1]+"/"+arr[0]+"/"+arr[2]);
+                var date=strToDate(str);
                 deta.push([date,userData.calorieMap[Object.keys(userData.calorieMap)[i]]]);
             }
 
@@ -138,7 +131,7 @@
         }
 
         function app() {
-            document.getElementById("uName").innerHTML = "&nbspWelcome "+app.user.displayName;
+            document.getElementById("uName").innerHTML = "&nbsp;&nbsp;Welcome "+app.user.displayName;
             var Ref = firebase.database().ref().child("Users").child(app.user.uid).child("userData");
             Ref.on("value", function(snapshot) {
                 if (snapshot.val()!=null){
@@ -181,11 +174,10 @@
 
     </div>
 <br/>
-
 <table width="80%" align="center" class="content" >
     <tr>
-        <td>
-            <h3 id="uName" align="center">&nbsp;Welcome</h3>
+        <td align="left">
+            <span style="font-size: large; font-family: Monospace;" id="uName">&nbsp;&nbsp;Welcome</span>
         </td>
     </tr>
 </table>

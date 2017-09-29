@@ -21,8 +21,72 @@
     
     
     <script>
+        function strToDate(str) {
+            str=str.replace(/,/g,"/");
+            str=str.replace(/{day=/g,"");
+            str=str.replace(/month=/g,"");
+            str=str.replace(/year=/g,"");
+            str=str.replace(/}/g,"");
+            var arr=str.split("/");
+            var date=new Date(arr[1]+"/"+arr[0]+"/"+arr[2]);
+            return date;
+        }
+
+        var userData;
+        var workouts=[];
+        var months=["January","February","March", "April", "May","June","July","August","September","October","November","December"];
+        function printWorkout(workout) {
+            var workoutDate=new Date(workout["day"]["month"]+"/"+workout["day"]["day"]+"/"+workout["day"]["year"]);
+            workoutDate.setHours(workout["hour"]);
+            workoutDate.setMinutes(workout["min"]);
+            var str="<table  width=\"80%\" align=\"center\" class=\"chart\"><tr><td width='50%'>";
+            str+="<br/>&nbsp;&nbsp;&nbsp;<span style=\"color: #7e8982 ;\">"+months[workoutDate.getMonth()]+" "+workoutDate.getDate()+", "+workoutDate.getFullYear()+"  "+ workoutDate.getHours()+":"+workoutDate.getMinutes()+"</span>";
+            var typstr;
+            if(workout["TYPE"]==0){
+                typstr="Running";
+            }
+            else if(workout["TYPE"]==1){
+                typstr="Cycling";
+            }
+            else if(workout["TYPE"]==2){
+                typstr="Treadmill VR";
+            }
+            str+="<br/><span class=\"title\">&nbsp;&nbsp;"+typstr+" </span><br/>";
+            str+="<br/><span class=\"field\">&nbsp;&nbsp;&nbsp;Callories burnt: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;"+workout["callorie"];
+            str+="<br/><span class=\"field\">&nbsp;&nbsp;&nbsp;Distance covered: </span>&nbsp;"+workout["distanceInMeters"].toFixed(2)+"&nbsp;m";
+            str+="<br/><span class=\"field\">&nbsp;&nbsp;&nbsp;Duration: </span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+(workout["timeInSec"]/60).toFixed(0)+" min "+(workout["timeInSec"]%60)+" sec";
+            str+="<br/><span class=\"field\">&nbsp;&nbsp;&nbsp;Average speed: </span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+(workout["distanceInMeters"]/workout["timeInSec"]).toFixed(2)+" m/s<br/><br/>";
+            str+="</td><td valign='top'>map</td></tr></table><br/>";
+            document.getElementById("workouts").innerHTML+=str;
+        }
+        function getWorkout(workoutkeyarr,i) {
+            var ref=firebase.database().ref().child("workouts").child(workoutkeyarr[i]);
+            ref.on("value", function(snapshot) {
+                if (snapshot.val()!=null){
+                    var workout=snapshot.val();
+                        printWorkout(workout);
+                }
+            }, function (error) {
+                console.log("Error: " + error.code);
+            });
+
+        }
+        function appNext(wokoutkeyarr) {
+            for(i=wokoutkeyarr.length-1;i>=0;i--){
+                workouts.push(getWorkout(wokoutkeyarr,i));
+            }
+        }
         function app() {
-            
+            var Ref = firebase.database().ref().child("Users").child(app.user.uid).child("userData");
+            Ref.on("value", function(snapshot) {
+                if (snapshot.val()!=null){
+                    userData=snapshot.val();
+                    var workoutkeyarr=Object.keys(userData.workouts);
+                    appNext(workoutkeyarr);
+                }
+            }, function (error) {
+                console.log("Error: " + error.code);
+            });
         }
     </script>
 </head>
@@ -48,7 +112,13 @@
     </table>
 
 </div>
+<br/>
 
+
+            <div id="workouts">
+
+
+            </div>
 
 </body>
 </html>

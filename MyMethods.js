@@ -8,8 +8,6 @@ function dateToStr(date) {
     ret+="}";
     return ret;
 }
-
-
 function getPreviousDate(date) {
     date.setDate(date.getDate()-1);
     return date;
