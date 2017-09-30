@@ -1,5 +1,100 @@
+<!-- Firebase js start -->
+<script src="https://www.gstatic.com/firebasejs/4.4.0/firebase.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.3.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.3.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.3.0/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.3.0/firebase-messaging.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.3.0/firebase-storage.js"></script>
+<script src="firebase.js"></script>
+
+<!-- Firebase js start -->
+
+<!-- chart js start -->
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+
+<!-- chart js start -->
+
+<!-- my methods start -->
+
+<script src="MyMethods.js"></script>
+
+<!-- my methods stop -->
+
+<title>Title</title>
+
+<!-- navigation bar css start -->
+<link rel="stylesheet" type="text/css" href="nav.css">
+<!-- navigation bar css stop -->
+
+
+<progress id="uploader" value="0" max="100">0%</progress>
+<input type="file" id="fileButton" value="upload"/>
+
+<textarea rows="4" cols="50" id="bodyta"></textarea>
+<button type="button" onclick="buttonpressed()">Click Me!</button>
 <script>
-    var myNumber = 97;
-    var formattedNumber = ;
-    console.log(formattedNumber);
+    var key;
+    var photouri;
+
+    function buttonpressed() {
+        var uid=app.user.uid;
+        var body = document.getElementById("bodyta").value;
+        var day=new Date().getDate();
+        var month=new Date().getMonth()+1;
+        var year=new Date().getFullYear();
+        var hour=new Date().getHours();
+        var min=new Date().getMinutes();
+        var postId=key;
+        var uName=app.user.displayName;
+        var type;
+        if(photouri==null)
+            type=0;
+        else
+            type=1;
+        var postref=firebase.database().ref().child("Posts");
+        var userref=firebase.database().ref().child("Users").child(uid).child("Posts");
+        userref.child(key).set(key);
+        postref.child(key).child("UID").set(uid);
+        postref.child(key).child("body").set(body);
+        postref.child(key).child("day").child("day").set(day);
+        postref.child(key).child("day").child("month").set(month);
+        postref.child(key).child("day").child("year").set(year);
+        postref.child(key).child("hour").set(hour);
+        postref.child(key).child("min").set(min);
+        postref.child(key).child("postId").set(postId);
+        postref.child(key).child("type").set(type);
+        postref.child(key).child("uName").set(uName);
+        if(type==1)
+            postref.child(key).child("photoUri").set(photouri);
+    }
+
+
+
+    var uploader = document.getElementById('uploader');
+    var fileButton =         document.getElementById('fileButton');
+    fileButton.addEventListener('change', function(e){
+        var file = e.target.files[0];
+        var storageRef = firebase.storage().ref('Photos/'+key);
+        var task = storageRef.put(file);
+        task.on('state_changed', function progress(snapshot) {
+            var percentage = (snapshot.bytesTransferred/snapshot.totalBytes)*100;
+            uploader.value = percentage;
+
+        }, function error(err) {
+
+
+        },function complete() {
+
+        });
+        task.then(function(snapshot){
+            photouri=snapshot.downloadURL;
+        });
+    });
+    function app() {
+        var ref=firebase.database().ref().child("Posts");
+        key=ref.push()["key"];
+    }
 </script>
+
