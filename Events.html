@@ -64,8 +64,9 @@
             if(date-new Date()<0)
                 status="Finished";
             var str="<table  width=\"100%\" align=\"center\" class=\"chart\"><td><td width='1%' height='470px'></td><td valign='top'>";
-            str+="<br/><span style=\"color: #7e8982 ;\">"+months[date.getMonth()]+" "+("0" +date.getDate() ).slice(-2)+", "+date.getFullYear()+"  "+ ("0" + date.getHours()).slice(-2)+":"+("0" + date.getMinutes()).slice(-2)+"</span>";
             str+="<br/><span class=\"title\">"+event["title"]+" </span><br/>";
+            str+="<br/><a  style='color: #bcff9b;text-decoration:none'>Event time : </a><span style=\"color: #7e8982 ;\">"+months[date.getMonth()]+" "+("0" +date.getDate() ).slice(-2)+", "+date.getFullYear()+"  "+ ("0" + date.getHours()).slice(-2)+":"+("0" + date.getMinutes()).slice(-2)+"</span><br/>";
+
             str+="<p align='justify'>"+event["description"]+"</p>";
             str+="<table><tr>";
             str+="<td width='50%'><span class=\"field\">Host: </span></td><td>"+event["creatorName"]+"</td>";
@@ -135,6 +136,17 @@
 
 </head>
 <body>
+<br/>
+<div align="center">
+    <table style="background-color: #141414" width="80%">
+        <tr>
+            <td align="center">
+
+                &nbsp; <img src="logoathletio.png" width="500px"/>
+            </td>
+        </tr>
+    </table>
+</div>
 <br/>
 <div id="navbar">
     <table width="80%" align="center">
