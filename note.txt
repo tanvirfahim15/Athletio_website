@@ -2,3 +2,32 @@ ref.once >> ref.on for single listen
 
 
 map API key: AIzaSyDfqqGzHfHmFF9E7cgrkJsO48HFbaKBBzs
+
+
+
+<script>
+    var lat=23.755002367315424;
+    var lng=90.37598417706734;
+
+    function getLocation(lat,lng) {
+        var latlng = {lat: 0, lng: 0};
+        latlng["lat"]=lat;
+        latlng["lng"]=lng;
+        var geocoder = new google.maps.Geocoder;
+        geocoder.geocode({'location': latlng}, function(results, status) {
+            if (status === 'OK') {
+                if (results[0]) {
+                    return(results[0]["formatted_address"]);
+                } else {
+                    return('Show on Map');
+                }
+            } else {
+                return('Show on Map');
+            }
+        });
+    }
+
+</script>
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDfqqGzHfHmFF9E7cgrkJsO48HFbaKBBzs">
+</script>

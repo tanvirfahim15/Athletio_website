@@ -1,0 +1,32 @@
+<div id="map" style="height: 100%"></div>
+<script>
+    var key=window.location.hash;
+    var arr=key.split("#");
+    lat=arr[1];
+    lng=arr[2];
+    msg=arr[3];
+    console.log(lat);
+    function drawmap() {
+        var latlng={lat: 0.0, lng: 0.0};
+        latlng["lat"]=parseFloat(lat);
+        latlng["lng"]=parseFloat(lng);
+        var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 15,
+            center: latlng,
+            mapTypeId: 'terrain'
+        });
+
+        var marker = new google.maps.Marker({
+            position: latlng,
+            map: map
+        });
+        var infowindow = new google.maps.InfoWindow;
+        infowindow.setContent(msg);
+        infowindow.open(map, marker);
+    }
+
+
+</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDfqqGzHfHmFF9E7cgrkJsO48HFbaKBBzs&callback=drawmap">
+</script>
+<title>Title</title>

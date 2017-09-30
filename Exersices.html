@@ -35,7 +35,7 @@
 
         var ind=0;
         function print(exersice) {
-             var str="<table  width=\"100%\" align=\"center\" class=\"chart\"><tr><td width='1%' height='320px'></td><td width='50%' ><br/>";
+             var str="<table  width=\"100%\" align=\"center\" class=\"chart\"><tr><td width='1%' height='320px'></td><td valign='top'><br/>";
             str+="<span class='title' >"+exersice["title"]+"</span><br/><p align='justify'>"+exersice["description"]+"</p>"+"<span class='field'>Category: </span><a style='color: #bcff9b' href='Exercisesbycategory.html#"+exersice["category"]+"'>"+exersice["category"]+"</a>";
             str+="<br/><br/></td><td width='1%'></td></tr></table><br/>";
             if(ind%2==0){
@@ -79,6 +79,7 @@
                     <a href="workouts.html">My Workouts</a>
                     <a class="active" href="Exersices.html">Exercises</a>
                     <a href="Events.html">Events</a>
+                    <a href="posts.html">Posts</a>
                 </div>
             </td>
             <td width="80px" valign="top">
@@ -99,6 +100,8 @@
 
             <div id="contentleft"></div>
         </td>
+
+        <td width="1%"></td>
         <td valign="top">
 
             <div id="contentright"></div>

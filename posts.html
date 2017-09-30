@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta charset="UTF-8">
+    <!-- Firebase js start -->
+    <script src="https://www.gstatic.com/firebasejs/4.4.0/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.3.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.3.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.3.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.3.0/firebase-messaging.js"></script>
+    <script src="firebase.js"></script>
+
+    <!-- Firebase js start -->
+
+    <!-- chart js start -->
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+
+    <!-- chart js start -->
+
+    <!-- my methods start -->
+
+    <script src="MyMethods.js"></script>
+
+    <!-- my methods stop -->
+
+    <title>Title</title>
+
+    <!-- navigation bar css start -->
+    <link rel="stylesheet" type="text/css" href="nav.css">
+    <!-- navigation bar css stop -->
+
+
+    <script>
+        var ind=0;
+        var posts;
+        var months=["January","February","March", "April", "May","June","July","August","September","October","November","December"];
+
+        function print(post) {
+            var date=new Date(post["day"]["month"]+"/"+post["day"]["day"]+"/"+post["day"]["year"]);
+            date.setHours(post["hour"]);
+            date.setMinutes(post["min"]);
+            var str="<table  width=\"100%\" align=\"center\" class=\"chart\"><td><td width='1%' ></td><td valign='top'>";
+
+            str+="<br/><span style=\"color: #7e8982 ;\">"+months[date.getMonth()]+" "+("0" +date.getDate() ).slice(-2)+", "+date.getFullYear()+"  "+ ("0" +date.getHours() ).slice(-2)+":"+("0" + date.getMinutes()).slice(-2)+"</span><br/>";
+            str+="<span class=\"title\">"+post["uName"]+"</span><br/>";
+            str+="<p align='justify'>"+post["body"]+"</p>";
+            if(post["type"]==1){
+                str+="<img style=\"max-width: 100%;\" src='"+post["photoUri"]+"'/><br/><br/>";
+            }
+
+
+
+            str+="</td><td width='1%'></td></tr></table><br/>";
+            if(ind%2==0)
+            document.getElementById("content").innerHTML+=str;
+            else
+                document.getElementById("content").innerHTML+=str;
+            ind++;
+
+        }
+        function appnext() {
+            for(i=Object.keys(posts).length-1;i>=0;i--){
+
+                print(posts[Object.keys(posts)[i]]);
+            }
+        }
+
+        function app() {
+            var Ref = firebase.database().ref().child("Posts");
+            Ref.on("value", function(snapshot) {
+                if (snapshot.val()!=null){
+                    posts=snapshot.val();
+                    appnext();
+                }
+            }, function (error) {
+                console.log("Error: " + error.code);
+            });
+
+        }
+
+    </script>
+
+</head>
+<body>
+<div align="center">
+<br/>
+<div id="navbar">
+    <table width="80%" align="center">
+        <tr>
+            <td >
+                <div class="topnav" >
+                    <a href="Home.html">Home</a>
+                    <a href="workouts.html">My Workouts</a>
+                    <a href="Exersices.html">Exercises</a>
+                    <a href="Events.html">Events</a>
+                    <a class="active" href="posts.html">Posts</a>
+                </div>
+            </td>
+            <td width="80px" valign="top">
+
+                <div class="topnav">
+                    <a onclick="logout()" href="Home.html">Logout</a>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+</div>
+<br/>
+
+
+
+<table width="80%" align="middle">
+    <tr>
+        <td class="content">
+            <a href="posts.html" style='color: #bcff9b;text-decoration:none;font-weight: bold'> &nbsp;Create Post</a>
+
+        </td>
+    </tr>
+</table>
+
+<table width="80%" align="center">
+    <tr>
+        <td width="50%" valign="top">
+
+            <div id="content"></div>
+        </td>
+    </tr>
+</table>
+</div>
+</body>
+</html>

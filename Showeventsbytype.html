@@ -20,6 +20,9 @@
 
 
     <script>
+
+
+        var key=window.location.hash.substring(1);
         var months=["January","February","March", "April", "May","June","July","August","September","October","November","December"];
         var ind=0;
         function print(event) {
@@ -64,7 +67,7 @@
             if(date-new Date()<0)
                 status="Finished";
             var str="<table  width=\"100%\" align=\"center\" class=\"chart\"><td><td width='1%' height='470px'></td><td valign='top'>";
-            str+="<br/><span style=\"color: #7e8982 ;\">"+months[date.getMonth()]+" "+("0" +date.getDate() ).slice(-2)+", "+date.getFullYear()+"  "+ ("0" + date.getHours()).slice(-2)+":"+("0" + date.getMinutes()).slice(-2)+"</span>";
+            str+="<br/><span style=\"color: #7e8982 ;\">"+months[date.getMonth()]+" "+("0" +date.getDate() ).slice(-2)+", "+date.getFullYear()+"  "+ ("0" + date.getHours()).slice(-2)+":"+("0" +date.getMinutes() ).slice(-2)+"</span>";
             str+="<br/><span class=\"title\">"+event["title"]+" </span><br/>";
             str+="<p align='justify'>"+event["description"]+"</p>";
             str+="<table><tr>";
@@ -119,7 +122,9 @@
                 if (snapshot.val()!=null){
                     var deta=snapshot.val();
                     for(i=0;i<Object.keys(deta).length;i++){
+                        if(key==deta[Object.keys(deta)[i]]["type"])
                         print(deta[Object.keys(deta)[i]]);
+
                     }
                 }
             }, function (error) {
@@ -166,6 +171,7 @@
 
             <div id="contentleft"></div>
         </td>
+
         <td width="1%"></td>
         <td valign="top">
 
