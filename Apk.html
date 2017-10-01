@@ -4,7 +4,6 @@
 <script src="https://www.gstatic.com/firebasejs/4.3.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/4.3.0/firebase-database.js"></script>
 <script src="https://www.gstatic.com/firebasejs/4.3.0/firebase-messaging.js"></script>
-<script src="https://www.gstatic.com/firebasejs/4.3.0/firebase-storage.js"></script>
 <script src="firebase.js"></script>
 
 <!-- Firebase js start -->
@@ -27,74 +26,136 @@
 <!-- navigation bar css start -->
 <link rel="stylesheet" type="text/css" href="nav.css">
 <!-- navigation bar css stop -->
-
-
-<progress id="uploader" value="0" max="100">0%</progress>
-<input type="file" id="fileButton" value="upload"/>
-
-<textarea rows="4" cols="50" id="bodyta"></textarea>
-<button type="button" onclick="buttonpressed()">Click Me!</button>
+<style>
+    #map {
+        height: 300px;
+        width: 300px;
+    }
+    #map2 {
+        height: 300px;
+        width: 300px;
+    }
+</style>
+<input type="date" id="date">
+<input type="submit" onclick="send()">
+<input type="text" id="title" value="Title">
+<input type="text" id="duration" value="Duration(minute)">
+<input type="text" id="distance" value="Distance(meter)">
+<textarea id="description" rows="10" cols="30">
+Describe the event....
+</textarea>
+<input id="hour" type="number"  min="0" max="23">
+<input id="min" type="number"  min="0" max="59">
 <script>
-    var key;
-    var photouri;
 
-    function buttonpressed() {
-        var uid=app.user.uid;
-        var body = document.getElementById("bodyta").value;
-        var day=new Date().getDate();
-        var month=new Date().getMonth()+1;
-        var year=new Date().getFullYear();
-        var hour=new Date().getHours();
-        var min=new Date().getMinutes();
-        var postId=key;
-        var uName=app.user.displayName;
-        var type;
-        if(photouri==null)
-            type=0;
-        else
-            type=1;
-        var postref=firebase.database().ref().child("Posts");
-        var userref=firebase.database().ref().child("Users").child(uid).child("Posts");
-        userref.child(key).set(key);
-        postref.child(key).child("UID").set(uid);
-        postref.child(key).child("body").set(body);
-        postref.child(key).child("day").child("day").set(day);
-        postref.child(key).child("day").child("month").set(month);
-        postref.child(key).child("day").child("year").set(year);
-        postref.child(key).child("hour").set(hour);
-        postref.child(key).child("min").set(min);
-        postref.child(key).child("postId").set(postId);
-        postref.child(key).child("type").set(type);
-        postref.child(key).child("uName").set(uName);
-        if(type==1)
-            postref.child(key).child("photoUri").set(photouri);
-    }
-
-
-
-    var uploader = document.getElementById('uploader');
-    var fileButton =         document.getElementById('fileButton');
-    fileButton.addEventListener('change', function(e){
-        var file = e.target.files[0];
-        var storageRef = firebase.storage().ref('Photos/'+key);
-        var task = storageRef.put(file);
-        task.on('state_changed', function progress(snapshot) {
-            var percentage = (snapshot.bytesTransferred/snapshot.totalBytes)*100;
-            uploader.value = percentage;
-
-        }, function error(err) {
-
-
-        },function complete() {
-
-        });
-        task.then(function(snapshot){
-            photouri=snapshot.downloadURL;
-        });
-    });
-    function app() {
-        var ref=firebase.database().ref().child("Posts");
-        key=ref.push()["key"];
-    }
 </script>
 
+<select id="type" onchange="settype()">
+    <option value="0">Running</option>
+    <option value="1">Cycling</option>
+    <option value="2">Football</option>
+    <option value="3">Cricket</option>
+    <option value="4">Walking</option>
+    <option value="5">Other</option>
+</select>
+
+
+
+
+<div id="map"></div>
+<div id="map2"></div>
+
+jjjjjjjjjj
+<script>
+    var creatorId;
+    var creatorName;
+    var day;
+    var month;
+    var year;
+    var hour;
+    var min;
+    var startlat=0.0;
+    var startlong=0.0;
+    var stoplat=0.0;
+    var stoplong=0.0;
+
+
+    var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth()+1; //January is 0!
+    var yyyy = today.getFullYear();
+    if(dd<10){
+        dd='0'+dd
+    }
+    if(mm<10){
+        mm='0'+mm
+    }
+
+    today = yyyy+'-'+mm+'-'+dd;
+    document.getElementById("date").setAttribute("min", today);
+    function send() {
+        creatorId=app.user.uid;
+        creatorName=app.user.displayName;
+
+        var date=new Date(document.getElementById("date").value);
+        day=date.getDate();
+        month=date.getMonth()+1;
+        year=date.getFullYear();
+        hour=document.getElementById("hour").value;
+        min=document.getElementById("min").value;
+        console.log(stoplat+" "+stoplong);
+
+    }
+    function settype() {
+        var type=document.getElementById("type").value;
+        if(!(type==0||type==1||type==4)){
+            document.getElementById('map2').style.visibility = "hidden";
+            document.getElementById('distance').style.visibility = "hidden";
+        }
+        else {
+
+            document.getElementById('map2').style.visibility = "visible";
+            document.getElementById('distance').style.visibility = "visible";
+        }
+    }
+    var mp1mrkr;
+    var mp2mrkr;
+    function init() {
+        var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 15,
+            center: {lat:23.730354854493314, lng: 90.39928436279297 }
+        });
+
+        map.addListener('click', function(e) {
+            startlat=e.latLng.lat();
+            startlong=e.latLng.lng();
+            if(mp1mrkr!=null)
+            mp1mrkr.setMap(null);
+            mp1mrkr = new google.maps.Marker({
+                position: e.latLng,
+                map: map
+            });
+        });
+        var map2 = new google.maps.Map(document.getElementById('map2'), {
+            zoom: 15,
+            center: {lat:23.730354854493314, lng: 90.39928436279297 }
+        });
+
+        map2.addListener('click', function(e) {
+            stoplat=e.latLng.lat();
+            stoplong=e.latLng.lng();
+            if(mp2mrkr!=null)
+                mp2mrkr.setMap(null);
+            mp2mrkr = new google.maps.Marker({
+                position: e.latLng,
+                map: map2
+            });
+        });
+    }
+    function app() {
+        
+    }
+
+</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDfqqGzHfHmFF9E7cgrkJsO48HFbaKBBzs&callback=init">
+</script>
