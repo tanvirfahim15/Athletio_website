@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- Firebase js start -->
+    <script src="https://www.gstatic.com/firebasejs/4.4.0/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.3.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.3.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.3.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.3.0/firebase-messaging.js"></script>
+    <script src="firebase.js"></script>
+
+    <!-- Firebase js start -->
+
+    <!-- chart js start -->
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+
+    <!-- chart js start -->
+
+    <!-- my methods start -->
+
+    <script src="MyMethods.js"></script>
+
+    <!-- my methods stop -->
+
+    <title>Title</title>
+
+    <!-- navigation bar css start -->
+    <link rel="stylesheet" type="text/css" href="nav.css">
+    <!-- navigation bar css stop -->
+
+
+    <style>
+        #map {
+            height: 300px;
+            width: 300px;
+        }
+        #map2 {
+            height: 300px;
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+
+<br/>
+<div align="center">
+    <table style="background-color: #333" width="80%">
+        <tr>
+            <td>
+
+                &nbsp; <img src="logoathletio.png" width="500px"/>
+            </td>
+        </tr>
+    </table>
+</div>
+<br/>
+<div id="navbar">
+    <table width="80%" align="center">
+        <tr>
+            <td >
+                <div class="topnav" >
+                    <a href="Home.html">Home</a>
+                    <a href="workouts.html">My Workouts</a>
+                    <a href="Exersices.html">Exercises</a>
+                    <a class="active" href="Events.html">Events</a>
+                    <a href="posts.html">Posts</a>
+                </div>
+            </td>
+            <td width="80px" valign="top">
+
+                <div class="topnav">
+                    <a onclick="logout()" href="Home.html">Logout</a>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+</div>
+
+
+<br/>
+<table width="80%" align="center" class="content" >
+    <tr>
+        <td align="left">
+            <span style="font-size: large; font-family: Monospace ;" id="uName">&nbsp;&nbsp;</span>
+        </td>
+    </tr>
+</table>
+<br/>
+<div align="center">
+<table class="chart" width="80%">
+    <tr>
+        <td width="1%"></td>
+        <td valign="top">
+            <br/>
+            <span class="title">Create Event</span>
+            <br/><br/>
+            <br/><br/>
+            <select id="type" onchange="settype()">
+                <option value="0">Running</option>
+                <option value="1">Cycling</option>
+                <option value="2">Football</option>
+                <option value="3">Cricket</option>
+                <option value="4">Walking</option>
+                <option value="5">Other</option>
+            </select>
+            <br/><br/>
+
+            <input type="text" id="title" value="Title">
+
+            <br/><br/>
+
+            <input type="date" id="date" style="font-size: 1.25rem">
+
+
+            <br/><br/>
+            <span class="field">Hour: </span>
+            <input id="hour" type="number"  min="0" max="23">&nbsp;&nbsp;&nbsp;
+            <span class="field">Minute: </span>
+            <input id="min" type="number"  min="0" max="59">
+
+            <br/><br/>
+
+            <span class="field">Duration(minute): &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+            <input type="number"  min="0" max="600" id="duration" >
+
+            <br/><br/>
+            <textarea id="description" rows="10" cols="50">Describe the event....</textarea>
+
+
+            <br/><br/>
+
+            <input type="submit" style="background-color: #24b44b;border: none;font-size: large; border-radius: 4px;margin: 8px 0;padding: 10px 10px; color: white;" onclick="send()">
+            <br/><br/>
+        </td>
+        <td>
+
+            <span class="field" id="dsttb">Distance:  </span>
+            <input type="number"  min="0" max="10000" id="distance" >
+            <br/><br/>
+            <span class="field">Choose start point:  </span>
+            <div id="map"></div>
+        </td>
+        <td>
+            <br/><br/>
+            <span class="field" id="endtb">Choose end point:  </span>
+            <div id="map2" style=" display: block;"></div>
+        </td>
+    </tr>
+
+</table>
+</div>
+
+
+
+
+
+
+
+
+<script>
+    function app() {
+        document.getElementById("uName").innerHTML+="Creating Event as "+app.user.displayName;
+    }
+
+    var creatorId;
+    var creatorName;
+    var day;
+    var month;
+    var year;
+    var hour;
+    var min;
+    var description;
+    var title;
+    var startlat=0.0;
+    var startlong=0.0;
+    var stoplat=0.0;
+    var stoplong=0.0;
+    var type;
+    var durationInSec;
+    var distance;
+    var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth()+1; //January is 0!
+    var yyyy = today.getFullYear();
+    if(dd<10){
+        dd='0'+dd
+    }
+    if(mm<10){
+        mm='0'+mm
+    }
+
+    today = yyyy+'-'+mm+'-'+dd;
+    document.getElementById("date").setAttribute("min", today);
+    function send() {
+        creatorId=app.user.uid;
+        creatorName=app.user.displayName;
+
+        var date=new Date(document.getElementById("date").value);
+        day=date.getDate();
+        month=date.getMonth()+1;
+        year=date.getFullYear();
+        hour=document.getElementById("hour").value;
+        min=document.getElementById("min").value;
+        description=document.getElementById("description").value;
+        durationInSec=document.getElementById("duration").value;
+        type=document.getElementById("type").value;
+        title=document.getElementById("title").value;
+        distance=document.getElementById("distance").value;
+        var ref= firebase.database().ref().child("Events");
+        var userref=firebase.database().ref().child("Users").child(creatorId).child("Events");
+        var key=ref.push()["key"];
+        if(creatorId==null||creatorName==null||date==null||hour==null||min==null||description==null||durationInSec==null||startlat==null||startlong==null||title==null||type==null){
+            return;
+        }
+        if(type==0||type==1||type==4){
+            if(stoplat==null||stoplong==null||distance==null)
+                return;
+        }
+        userref.child(key).set(key);
+        ref.child(key).child("creatorID").set(creatorId);
+        ref.child(key).child("creatorName").set(creatorName);
+        ref.child(key).child("day").child("day").set(day);
+        ref.child(key).child("day").child("month").set(month);
+        ref.child(key).child("day").child("year").set(year);
+        ref.child(key).child("hour").set(parseInt(hour));
+        ref.child(key).child("min").set(parseInt(min));
+        ref.child(key).child("description").set(description);
+
+        durationInSec=durationInSec*60;
+        ref.child(key).child("durationInSec").set(parseInt(durationInSec));
+        ref.child(key).child("start").child("latitude").set(startlat);
+        ref.child(key).child("start").child("longitude").set(startlong);
+        ref.child(key).child("status").set("0");
+        ref.child(key).child("title").set(title);
+        ref.child(key).child("type").set(parseInt(type));
+        if(type==0||type==1||type==4){
+
+            ref.child(key).child("stop").child("latitude").set(stoplat);
+            ref.child(key).child("stop").child("longitude").set(stoplong);
+            ref.child(key).child("distanceInMeters").set(parseInt(distance));
+        }
+        alert("Done!!!");
+
+
+    }
+    function settype() {
+        type=document.getElementById("type").value;
+        if(!(type==0||type==1||type==4)){
+            document.getElementById('map2').style.display = 'none';
+            document.getElementById('distance').style.visibility = "hidden";
+            document.getElementById('dsttb').style.visibility = "hidden";
+            document.getElementById('endtb').style.visibility = "hidden";
+        }
+        else {
+
+            document.getElementById('map2').style.display = 'block';
+            document.getElementById('distance').style.visibility = "visible";
+            document.getElementById('dsttb').style.visibility = "visible";
+            document.getElementById('endtb').style.visibility = "visible";
+        }
+    }
+    var mp1mrkr;
+    var mp2mrkr;
+    function init() {
+        var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 15,
+            center: {lat:23.730354854493314, lng: 90.39928436279297 }
+        });
+
+        map.addListener('click', function(e) {
+            startlat=e.latLng.lat();
+            startlong=e.latLng.lng();
+            if(mp1mrkr!=null)
+                mp1mrkr.setMap(null);
+            mp1mrkr = new google.maps.Marker({
+                position: e.latLng,
+                map: map
+            });
+            map.setCenter(e.latLng);
+        });
+        var map2 = new google.maps.Map(document.getElementById('map2'), {
+            zoom: 15,
+            center: {lat:23.730354854493314, lng: 90.39928436279297 }
+        });
+
+        map2.addListener('click', function(e) {
+            stoplat=e.latLng.lat();
+            stoplong=e.latLng.lng();
+            if(mp2mrkr!=null)
+                mp2mrkr.setMap(null);
+            mp2mrkr = new google.maps.Marker({
+                position: e.latLng,
+                map: map2
+            });
+            map2.setCenter(e.latLng);
+        });
+    }
+
+</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDfqqGzHfHmFF9E7cgrkJsO48HFbaKBBzs&callback=init">
+</script>
+
+</body>
+</html>
