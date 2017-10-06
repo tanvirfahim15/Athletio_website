@@ -83,10 +83,11 @@
             }
         }
         function app() {
-            var Ref = firebase.database().ref().child("Users").child(app.user.uid).child("userData");
+            var Ref = firebase.database().ref().child("Users").child(app.user.uid);
             Ref.on("value", function(snapshot) {
                 if (snapshot.val()!=null){
                     userData=snapshot.val();
+                    console.log(userData);
                     var workoutkeyarr=Object.keys(userData.workouts);
                     appNext(workoutkeyarr);
                 }
